@@ -1,0 +1,92 @@
+**Step 1: Create project folder**
+
+mkdir comments-app
+
+cd comments-app
+
+
+
+
+
+**Step 2: Initialize Node.js**
+
+
+
+npm init -y
+
+
+
+**Step 3: Install packages**
+
+
+
+npm install express ejs uuid
+
+
+
+
+
+**Step 4: Install Nodemon**
+
+**Install Nodemon as a development dependency:**
+
+
+
+npm install --save-dev nodemon
+
+
+
+
+
+**Step 5: Create folders**
+
+
+
+mkdir views/comments
+
+
+
+
+
+**Step 6: Create files in VS Code**
+
+**Create these files manually:**
+
+
+
+
+
+text
+
+comments-app/
+
+│
+
+├── index.js
+
+├── package.json
+
+│
+
+├── views/
+
+│   └── comments/
+
+│       ├── index.ejs
+
+│       ├── new.ejs
+
+│       └── show.ejs
+
+│
+
+└── node\_modules/
+
+
+
+
+
+**Step 7: Run**
+
+**node index.js**
+

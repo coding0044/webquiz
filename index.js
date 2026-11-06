@@ -33,19 +33,29 @@ let comments = [
         comment: 'woof woof woof'
     }
 ]
+
 app.get('/comments', (req, res) => {
     res.render('comments/index', { comments });
 })
+
 app.get('/comments/new', (req, res) => {
     res.render('comments/new');
 })
+
 // CREATE - creates a new comment
-// **********************************
 app.post('/comments', (req, res) => {
     const { username, comment } = req.body;
     comments.push({ username, comment, id: uuid() })
     res.redirect('/comments');
 })
+
+// SHOW - displays details about a specific comment
+app.get('/comments/:id', (req, res) => {
+    const { id } = req.params;
+    const comment = comments.find(c => c.id === id);
+    res.render('comments/show', { comment });
+})
+
 app.listen(8000, () => {
     console.log("ON PORT 8000!")
 })
