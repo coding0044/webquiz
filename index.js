@@ -1,16 +1,21 @@
+
 const path = require('path');
 const { v4: uuid } = require('uuid');
 const express = require('express');
+const methodOverride = require('method-override');
+
 const app = express();
 
-//To parse form data in POST request body:
-app.use(express.urlencoded({ extended: true }))
-// To parse incoming JSON in POST request body:
-app.use(express.json())
-// Views folder and EJS setup:
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-// Our fake database:
+// Middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(methodOverride('_method'));
+
+// EJS setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+// Fake database
 let comments = [
     {
         id: uuid(),
@@ -32,30 +37,89 @@ let comments = [
         username: 'onlysayswoof',
         comment: 'woof woof woof'
     }
-]
+];
 
+// INDEX - Show all comments
 app.get('/comments', (req, res) => {
     res.render('comments/index', { comments });
-})
+});
 
+// NEW - Form to create a comment
 app.get('/comments/new', (req, res) => {
     res.render('comments/new');
-})
+});
 
-// CREATE - creates a new comment
+// CREATE - Create a new comment
 app.post('/comments', (req, res) => {
     const { username, comment } = req.body;
-    comments.push({ username, comment, id: uuid() })
-    res.redirect('/comments');
-})
 
-// SHOW - displays details about a specific comment
+    comments.push({
+        username,
+        comment,
+        id: uuid()
+    });
+
+    res.redirect('/comments');
+});
+
+// SHOW - Show a specific comment
 app.get('/comments/:id', (req, res) => {
     const { id } = req.params;
-    const comment = comments.find(c => c.id === id);
-    res.render('comments/show', { comment });
-})
 
+    const comment = comments.find(c => c.id === id);
+
+    if (!comment) {
+        return res.status(404).send('Comment not found');
+    }
+
+    res.render('comments/show', { comment });
+});
+
+// EDIT - Show edit form
+app.get('/comments/:id/edit', (req, res) => {
+    const { id } = req.params;
+
+    const comment = comments.find(c => c.id === id);
+
+    if (!comment) {
+        return res.status(404).send('Comment not found');
+    }
+
+    res.render('comments/edit', { comment });
+});
+
+// UPDATE - Update comment
+app.patch('/comments/:id', (req, res) => {
+    const { id } = req.params;
+    const { comment } = req.body;
+
+    const foundComment = comments.find(c => c.id === id);
+
+    if (!foundComment) {
+        return res.status(404).send('Comment not found');
+    }
+
+    foundComment.comment = comment;
+
+    res.redirect('/comments');
+});
+
+// DELETE - Delete comment
+app.delete('/comments/:id', (req, res) => {
+    const { id } = req.params;
+
+    const foundIndex = comments.findIndex(c => c.id === id);
+
+    if (foundIndex === -1) {
+        return res.status(404).send('Comment not found');
+    }
+
+    comments.splice(foundIndex, 1);
+
+    res.redirect('/comments');
+});
+
+// Server
 app.listen(8000, () => {
-    console.log("ON PORT 8000!")
-})
+    console.log("ON PORT 8000!");
+});
