@@ -1,0 +1,56 @@
+
+<h1>Filter Comments</h1>
+
+<form action="/comments/filter" method="GET">
+
+    <label>Select Username:</label>
+
+    <select name="username">
+
+        <option value="all"
+            <%= selectedUsername === 'all' ? 'selected' : '' %>>
+            All Users
+        </option>
+
+        <% for (let username of usernames) { %>
+
+            <option
+                value="<%= username %>"
+                <%= selectedUsername === username ? 'selected' : '' %>
+            >
+                <%= username %>
+            </option>
+
+        <% } %>
+
+    </select>
+
+    <button type="submit">Filter</button>
+
+</form>
+
+<hr>
+
+<h2>Filtered Results</h2>
+
+<% if (results.length === 0) { %>
+
+    <p>No comments found!</p>
+
+<% } %>
+
+<% for (let comment of results) { %>
+
+    <div>
+        <h3><%= comment.username %></h3>
+        <p><%= comment.comment %></p>
+
+        <a href="/comments/<%= comment.id %>">
+            View Comment
+        </a>
+    </div>
+
+
+<% } %>
+
+<a href="/comments">Back to Comments</a>

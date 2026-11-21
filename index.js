@@ -44,25 +44,61 @@ app.get('/comments', (req, res) => {
     res.render('comments/index', { comments });
 });
 
-// NEW - Form to create a comment
+// NEW - Show new comment form
 app.get('/comments/new', (req, res) => {
     res.render('comments/new');
 });
 
-// CREATE - Create a new comment
+// CREATE - Add new comment
 app.post('/comments', (req, res) => {
     const { username, comment } = req.body;
 
     comments.push({
+        id: uuid(),
         username,
-        comment,
-        id: uuid()
+        comment
     });
 
     res.redirect('/comments');
 });
 
-// SHOW - Show a specific comment
+// SEARCH - Search comments
+app.get('/comments/search', (req, res) => {
+    const { q } = req.query;
+
+    const searchQuery = (q || '').trim().toLowerCase();
+
+    const results = comments.filter(c =>
+        c.username.toLowerCase().includes(searchQuery) ||
+        c.comment.toLowerCase().includes(searchQuery)
+    );
+
+    res.render('comments/search', {
+        results,
+        q: q || ''
+    });
+});
+
+// FILTER - Select username
+app.get('/comments/filter', (req, res) => {
+    const { username } = req.query;
+
+    const usernames = [...new Set(comments.map(c => c.username))];
+
+    let results = comments;
+
+    if (username && username !== 'all') {
+        results = comments.filter(c => c.username === username);
+    }
+
+    res.render('comments/filter', {
+        results,
+        usernames,
+        selectedUsername: username || 'all'
+    });
+});
+
+// SHOW - Show single comment
 app.get('/comments/:id', (req, res) => {
     const { id } = req.params;
 
@@ -119,7 +155,7 @@ app.delete('/comments/:id', (req, res) => {
     res.redirect('/comments');
 });
 
-// Server
+// SERVER
 app.listen(8000, () => {
-    console.log("ON PORT 8000!");
+    console.log('ON PORT 8000!');
 });

@@ -3,6 +3,33 @@
 
 <a href="/comments/new">New Comment</a>
 
+<!-- Search -->
+<form action="/comments/search" method="GET">
+    <input
+        type="text"
+        name="q"
+        placeholder="Search username or comment"
+    >
+    <button type="submit">Search</button>
+</form>
+
+<!-- Select Filter -->
+<form action="/comments/filter" method="GET">
+    <select name="username">
+        <option value="all">All Users</option>
+
+        <% for (let username of [...new Set(comments.map(c => c.username))]) { %>
+            <option value="<%= username %>">
+                <%= username %>
+            </option>
+        <% } %>
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
+<hr>
+
 <% for (let comment of comments) { %>
 
     <div>
